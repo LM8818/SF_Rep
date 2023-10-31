@@ -70,7 +70,7 @@
 ## Установка проекта
 
 ```
-git clone https://github.com/LM8818/SF_Rep/Project-01
+git clone https://github.com/LM8818/SF_Rep/Project_Resume_Analysis
 ```
 ## Использование
 * Вся информация о работе представлена в jupyter-ноутбуке Project_3_Анализ_резюме_из_HeadHunter.ipynb.
