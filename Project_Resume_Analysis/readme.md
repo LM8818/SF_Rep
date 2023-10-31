@@ -78,4 +78,4 @@ git clone https://github.com/LM8818/SF_Rep/Project-01
 
  
 
-:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/tree/master/Project-01 Analysis of resumes from HeadHunter/readme.md)
+:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/tree/master/Project_Resume_Analysis/readme.md)
