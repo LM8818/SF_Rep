@@ -1,13 +1,13 @@
 # Проект 1. Угадай число
-[Проект 1. Игра: Угадай число](https://github.com/LM8818/SF_REPO/tree/main/Project1)
+[Проект 1. Игра: Угадай число](Guess_the_number/game_v2.py)
 
 ## Оглавление  
-[1. Описание проекта](https://github.com/LM8818/SF_REPO/tree/main/Project1#Описание-проекта)  
-[2. Какой кейс решаем?](https://github.com/LM8818/SF_REPO/tree/main/Project1#Какой-кейс-решаем)  
-[3. Краткая информация о данных](https://github.com/LM8818/SF_REPO/tree/main/Project1#Краткая-информация-о-данных)  
-[4. Этапы работы над проектом](https://github.com/LM8818/SF_REPO/tree/main/Project1#Этапы-работы-над-проектом)  
-[5. Результат](https://github.com/LM8818/SF_REPO/tree/main/Project1#Результат)    
-[6. Выводы](https://github.com/LM8818/SF_REPO/tree/main/Project1#Выводы) 
+[1. Описание проекта](#Описание-проекта)  
+[2. Какой кейс решаем?](#Какой-кейс-решаем)  
+[3. Краткая информация о данных](#Краткая-информация-о-данных)  
+[4. Этапы работы над проектом](#Этапы-работы-над-проектом)  
+[5. Результат](#Результат)    
+[6. Выводы](#Выводы) 
 
 [7. data.csv](https://drive.google.com/file/d/1kKY9m4pv13f-fp2F48aqIxm3cSpruGEm/view?usp=sharing)
 
