@@ -1,4 +1,4 @@
-![](./images/hh.pn)
+![](./images/hh.png)
 
 
 # <center> Анализ базы данных резюме c Head Hunter </center>
