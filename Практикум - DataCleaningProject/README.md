@@ -67,3 +67,5 @@ git clone https://github.com/SkillfactoryDS/DataCleaningProject
 ## Выводы
 
 Допишите выводы по проделанной работе.
+
+:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/blob/main/Project-01 Analysis of resumes from HeadHunter/README.md#Оглавление)
