@@ -68,4 +68,4 @@ git clone https://github.com/SkillfactoryDS/DataCleaningProject
 
 Допишите выводы по проделанной работе.
 
-:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/tree/master/DataCleaningProject/README.md/README.md#Оглавление)
+:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/tree/master/DataCleaningProject/README.md/#Оглавление)
