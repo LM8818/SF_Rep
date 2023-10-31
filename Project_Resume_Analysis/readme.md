@@ -67,10 +67,9 @@
     * [pandas (1.3.4)](https://pandas.pydata.org)
     * [matplotlib (3.4.3)](https://matplotlib.org)
     * [seaborn (0.11.2)](https://seaborn.pydata.org)
-* [библиотека find_outliers.py](https://github.com/LM8818/SF_Rep/tree/master/Project_Resume_Analysis/outliers_lib/readme.md)
-
+* [библиотека find_outliers.py](https://github.com/LM8818/SF_Rep/tree/master/Project_Resume_Analysis/outliers_lib/README.md/#Огравление)
+  
 ## Установка проекта
-
 ```
 git clone https://github.com/LM8818/SF_Rep/Project_Resume_Analysis
 ```
