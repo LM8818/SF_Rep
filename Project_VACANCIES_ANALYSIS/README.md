@@ -117,7 +117,7 @@ EMPLOYERS_INDUSTRIES
 ```
 git clone https://github.com/LM8818/SF_Rep/Project_VACANCIES_ANALYSIS
 ```
-## Использование
+## Использование проекта
 * Вся информация о работе представлена в jupyter-ноутбуке Project_3_Анализ_вакансий_из_HeadHunter.ipynb.
 * Для отображения графиков зайдите на https://nbviewer.org/ и вставьте окно ввода предварительно скопированную ссылку на  Project_3_Анализ_вакансий_из_HeadHunter.ipynb
 
