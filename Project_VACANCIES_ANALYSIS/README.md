@@ -59,7 +59,7 @@ EMPLOYERS_INDUSTRIES
 
 ![](./images/SQL_pj2_2_6.png)
 
-:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
+:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md)
 
 
 
