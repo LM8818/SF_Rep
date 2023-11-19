@@ -59,7 +59,7 @@ EMPLOYERS_INDUSTRIES
 
 ![](./images/SQL_pj2_2_6.png)
 
-
+:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
 
 
 
@@ -69,6 +69,8 @@ EMPLOYERS_INDUSTRIES
 * Преобразование данных
 * Разведывательный анализ
 * Очистка данных
+
+  :arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
 
 ## Условия соревнования:
 
@@ -92,18 +94,22 @@ EMPLOYERS_INDUSTRIES
 ## Что практикуем?
 
 Работу с данными и оформление отчетов с помощью средств python
+:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
 
 ## Результаты:
 
 Ноутбук с выполненными заданиями и выводами
+:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
 
 ## Используемые зависимости
-* Python (3.9):
-    * [numpy (1.20.3)](https://numpy.org)
+* Python (3.9): 
     * [pandas (1.3.4)](https://pandas.pydata.org)
-    * [matplotlib (3.4.3)](https://matplotlib.org)
-    * [seaborn (0.11.2)](https://seaborn.pydata.org)
-* [библиотека find_outliers.py](https://github.com/LM8818/SF_Rep/tree/master/Project_Resume_Analysis/outliers_lib/README.md/#Огравление)
+    *  psycopg2
+    *  plotly.express
+    *  requests
+    *  warnings
+  
+  :arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
   
 ## Установка проекта
 ```
@@ -119,4 +125,4 @@ git clone https://github.com/LM8818/SF_Rep/Project_VACANCIES_ANALYSIS
 
  
 
-:arrow_up:[к оглавлению](https://github.com/LM8818/SF_Rep/tree/master/Project_Project_VACANCIES_ANALYSIS/readme.md)
+:arrow_up:[к оглавлению](Project_VACANCIES_ANALYSIS/README.md/#Оглавление)
