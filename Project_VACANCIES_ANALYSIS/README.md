@@ -1,7 +1,7 @@
 ![](./images/hh.png)
 
 
-# <center> Анализ базы данных ваканчий c Head Hunter </center>
+# <center> Анализ базы данных вакансий c Head Hunter </center>
 
 
 ## Оглавление
