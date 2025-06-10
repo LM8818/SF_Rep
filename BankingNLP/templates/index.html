@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking NLP System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏦</div>
+            <h1>Banking NLP System</h1>
+            <p class="subtitle">Интеллектуальный анализ банковских разговоров</p>
+        </div>
+
+        <div class="form-section">
+            <form id="analysis-form">
+                <div class="form-group">
+                    <label for="conversation-text">Текст разговора</label>
+                    <textarea 
+                        id="conversation-text" 
+                        name="text" 
+                        placeholder="Введите текст банковского разговора..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="examples-section">
+                    <p class="examples-title">Примеры для тестирования:</p>
+                    <div class="example-buttons">
+                        <button type="button" class="example-btn" data-example="кредит">🚗 Автокредит</button>
+                        <button type="button" class="example-btn" data-example="проблема">📱 Проблемы с приложением</button>
+                        <button type="button" class="example-btn" data-example="ипотека">🏠 Ипотека</button>
+                        <button type="button" class="example-btn" data-example="карта">💳 Разблокировка карты</button>
+                        <button type="button" class="example-btn" data-example="вклад">💰 Банковский вклад</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="analyze-btn" id="analyze-btn">
+                    Анализировать разговор
+                </button>
+            </form>
+        </div>
+
+        <!-- Результаты показываются только после анализа -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2>Результаты анализа</h2>
+            
+            <div class="result-grid">
+                <div class="result-card">
+                    <h3>🎯 Тематики</h3>
+                    <div id="themes-container" class="tags-container"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>🏦 Банковские продукты</h3>
+                    <div id="products-container" class="tags-container"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>😊 Эмоции</h3>
+                    <div id="emotions-container" class="emotions-chart"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>📊 Уверенность</h3>
+                    <div class="confidence-container">
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar" id="confidence-bar"></div>
+                        </div>
+                        <span class="confidence-value" id="confidence-value">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

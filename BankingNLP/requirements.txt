@@ -1,0 +1,100 @@
+# Banking NLP System - Зависимости Python
+# =====================================
+
+# FastAPI и веб-сервер
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+gunicorn>=21.2.0
+
+# Аутентификация и безопасность  
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+cryptography>=41.0.0
+python-multipart>=0.0.6
+
+# База данных и ORM
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+psycopg2-binary>=2.9.0
+asyncpg>=0.29.0
+
+# Кэширование
+redis>=5.0.0
+aioredis>=2.0.0
+
+# Обработка данных
+pandas>=2.1.0
+numpy>=1.24.0
+openpyxl>=3.1.0
+
+# Machine Learning и NLP
+torch>=2.1.0
+transformers>=4.35.0
+tokenizers>=0.15.0
+huggingface-hub>=0.19.0
+scikit-learn>=1.3.0
+spacy>=3.7.0
+natasha>=1.6.0
+
+# Конфигурация и валидация
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+
+# Логирование
+structlog>=23.2.0
+python-json-logger>=2.0.0
+
+# Мониторинг и метрики
+prometheus-client>=0.19.0
+sentry-sdk[fastapi]>=1.38.0
+
+# Тестирование
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+httpx>=0.25.0
+faker>=20.0.0
+
+# Инструменты разработки
+black>=23.11.0
+isort>=5.12.0
+flake8>=6.1.0
+mypy>=1.7.0
+pre-commit>=3.5.0
+
+# Утилиты
+click>=8.1.0
+rich>=13.7.0
+typer>=0.9.0
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Async и HTTP клиенты
+aiohttp>=3.9.0
+aiofiles>=23.2.0
+httpx>=0.25.0
+
+# Обработка изображений и файлов (если нужно)
+Pillow>=10.1.0
+python-magic>=0.4.0
+
+# Для работы с Excel и CSV
+xlsxwriter>=3.1.0
+csvkit>=1.2.0
+
+# Для генерации документации
+mkdocs>=1.5.0
+mkdocs-material>=9.4.0
+
+# Дополнительные утилиты
+tqdm>=4.66.0
+colorama>=0.4.0
+tabulate>=0.9.0
+
+psutil>=5.9.0
+faker>=20.0.0
+
+jinja2>=3.1.3
+pydantic>=2.11.0
+
