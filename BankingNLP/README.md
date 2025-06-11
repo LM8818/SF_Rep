@@ -46,31 +46,92 @@ python3 -m src.banking_nlp.main
 ## 🏗️ Структура проекта
 
 ```
-banking_nlp_system/
-├── README.md                    # Документация проекта
-├── requirements.txt             # Зависимости Python
-├── run.py                       # Скрипт автоматического запуска
-├── templates/                   # HTML шаблоны
+Дерево каталогов для: BankingNLP
+├── Dockerfile
+├── Makefile
+├── README.md                                 # Документация проекта
+├── api
+│   └── routers.py                             # API маршруты
+├── data
+│   ├── processed
+│   │   ├── conversation_analytics.csv
+│   │   ├── conversations_processed.csv
+│   │   ├── data_metadata.json
+│   │   └── themes_summary.csv
+│   └── raw
+│   │   └── conversations_raw_20250611_131947.csv
+├── directory_tree.txt
+├── docker-compose.yml
+├── img
+│   ├── API_test_ans.jpg
+│   └── API_test_req.jpg
+├── info.md
+├── logs
+│   └── app.log
+├── project_structure.txt
+├── pyproject.toml
+├── requirements.txt                          # Зависимости Python
+├── run.py                                    # Скрипт автоматического запуска
+├── src
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-312.pyc
+│   └── banking_nlp
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │       ├── __init__.cpython-312.pyc
+│   │       └── main.cpython-312.pyc
+│   │   ├── api
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   └── routes.cpython-312.pyc
+│   │       └── routes.py
+│   │   ├── core                              
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   ├── config.cpython-312.pyc
+│   │       │   └── logging_config.cpython-312.pyc
+│   │       ├── config.py                             # Конфигурация системы
+│   │       └── logging_config.py
+│   │   ├── data
+│   │       └── __init__.py
+│   │   ├── main.py
+│   │   ├── services
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   ├── analysis.cpython-312.pyc
+│   │       │   └── health.cpython-312.pyc
+│   │       ├── analysis.py
+│   │       └── health.py
+│   │   └── utils
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │           ├── __init__.cpython-312.pyc
+│   │           ├── data_generator.cpython-312.pyc
+│   │           └── data_initializer.cpython-312.pyc
+│   │       ├── data_generator.py
+│   │       ├── data_initializer.py
+│   │       └── preprocessing.py
+├── static                   # Статические файлы (CSS, JS)
+│   ├── app.js
+│   ├── bank_icon.svg
+│   └── style.css
+├── templates                 # HTML шаблоны
 │   └── index.html
-├── static/                      # Статические файлы (CSS, JS)
-│   ├── style.css
-│   └── app.js
-├── config/                      # Конфигурационные файлы
-│   ├── banking_products.json
-│   └── conversation_themes.json
-└── src/
-    └── banking_nlp/
-        ├── __init__.py
-        ├── main.py              # Основное приложение FastAPI
-        ├── core/
-        │   ├── __init__.py
-        │   └── config.py        # Конфигурация системы
-        ├── api/
-        │   ├── __init__.py
-        │   └── routes.py        # API маршруты
-        └── services/
-            ├── __init__.py
-            └── analysis.py      # Сервис анализа текста
+├── test.ipynb
+└── tests
+│   ├── __init__.py
+│   ├── e2e
+│       └── __init__.py
+│   ├── integration
+│       ├── __init__.py
+│       └── test_api.py
+│   └── unit
+│       ├── __init__.py
+│       └── test_analysis.py            
 ```
 
 ## 🌐 Использование системы

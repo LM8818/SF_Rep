@@ -91,7 +91,7 @@ models/
 *.pth
 
 # Data files
-data/raw/
+#data/raw/
 data/processed/
 data/encrypted/
 

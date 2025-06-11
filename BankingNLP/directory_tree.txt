@@ -1,0 +1,86 @@
+Дерево каталогов для: C:\MyVSCode\BankingNLP
+├── Dockerfile
+├── Makefile
+├── README.md
+├── api
+│   └── routers.py
+├── data
+│   ├── processed
+│   │   ├── conversation_analytics.csv
+│   │   ├── conversations_processed.csv
+│   │   ├── data_metadata.json
+│   │   └── themes_summary.csv
+│   └── raw
+│   │   └── conversations_raw_20250611_131947.csv
+├── directory_tree.txt
+├── docker-compose.yml
+├── img
+│   ├── API_test_ans.jpg
+│   └── API_test_req.jpg
+├── info.md
+├── logs
+│   └── app.log
+├── project_structure.txt
+├── pyproject.toml
+├── requirements.txt
+├── run.py
+├── src
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-312.pyc
+│   └── banking_nlp
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │       ├── __init__.cpython-312.pyc
+│   │       └── main.cpython-312.pyc
+│   │   ├── api
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   └── routes.cpython-312.pyc
+│   │       └── routes.py
+│   │   ├── core
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   ├── config.cpython-312.pyc
+│   │       │   └── logging_config.cpython-312.pyc
+│   │       ├── config.py
+│   │       └── logging_config.py
+│   │   ├── data
+│   │       └── __init__.py
+│   │   ├── main.py
+│   │   ├── services
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │       │   ├── __init__.cpython-312.pyc
+│   │       │   ├── analysis.cpython-312.pyc
+│   │       │   └── health.cpython-312.pyc
+│   │       ├── analysis.py
+│   │       └── health.py
+│   │   └── utils
+│   │       ├── __init__.py
+│   │       ├── __pycache__
+│   │           ├── __init__.cpython-312.pyc
+│   │           ├── data_generator.cpython-312.pyc
+│   │           └── data_initializer.cpython-312.pyc
+│   │       ├── data_generator.py
+│   │       ├── data_initializer.py
+│   │       └── preprocessing.py
+├── static
+│   ├── app.js
+│   ├── bank_icon.svg
+│   └── style.css
+├── templates
+│   └── index.html
+├── test.ipynb
+└── tests
+│   ├── __init__.py
+│   ├── e2e
+│       └── __init__.py
+│   ├── integration
+│       ├── __init__.py
+│       └── test_api.py
+│   └── unit
+│       ├── __init__.py
+│       └── test_analysis.py
