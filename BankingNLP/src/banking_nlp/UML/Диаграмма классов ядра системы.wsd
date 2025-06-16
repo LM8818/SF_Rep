@@ -1,0 +1,38 @@
+@startuml
+' === СТИЛЬ ===
+skinparam backgroundColor #F8FBFF
+skinparam class {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontColor #0D47A1
+  FontSize 15
+  ArrowColor #1976D2
+}
+
+title <b><size:20>Классы ядра банковской NLP-системы</size></b>
+
+class BankingTextPreprocessor {
+  - config: dict
+  - banking_terms: dict
+  + preprocess(text: str): str
+  + batch_preprocess(texts: list): list
+}
+
+class TopicClassifier {
+  - model: BertModel
+  - tokenizer: BertTokenizer
+  + predict(text: str): dict
+  + evaluate(dataset: Dataset): metrics
+}
+
+class DialogueProcessor {
+  - preprocessor: BankingTextPreprocessor
+  - classifier: TopicClassifier
+  + process_dialogue(json_ dict): dict
+}
+
+BankingTextPreprocessor --> TopicClassifier : Обработанные данные
+DialogueProcessor o-- BankingTextPreprocessor
+DialogueProcessor o-- TopicClassifier
+
+@enduml

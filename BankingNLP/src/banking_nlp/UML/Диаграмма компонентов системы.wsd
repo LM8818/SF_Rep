@@ -1,0 +1,51 @@
+@startuml
+' === СТИЛЬ ===
+skinparam backgroundColor #F8FBFF
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontColor #0D47A1
+  FontSize 15
+}
+skinparam cloud {
+  BackgroundColor #FFF3E0
+  BorderColor #FFA726
+  FontColor #E65100
+}
+skinparam queue {
+  BackgroundColor #E8F5E9
+  BorderColor #43A047
+  FontColor #1B5E20
+}
+skinparam ArrowColor #1976D2
+skinparam ArrowThickness 2
+
+title <b><size:20>Компоненты банковской NLP-системы</size></b>
+legend left
+<b>Синие прямоугольники</b> — внутренние сервисы системы
+<b>Оранжевые облака</b> — внешние системы
+<b>Зеленые очереди</b> — потоковые данные
+endlegend
+
+package "Банковская NLP Система" {
+  [API Gateway] as api
+  [Data Preprocessing] as pre
+  [ML Models] as ml
+  [Monitoring] as mon
+  [Database] as db
+}
+
+cloud "CRM система" as crm
+queue "Kafka" as kafka
+
+api --> pre : HTTP/REST
+pre --> ml : Обработанные данные
+ml --> db : Сохранение результатов
+api --> mon : Метрики
+mon --> db : Логи
+kafka --> pre : Сырые транскрипты
+crm --> api : Запросы
+api --> crm : Ответы
+
+@enduml

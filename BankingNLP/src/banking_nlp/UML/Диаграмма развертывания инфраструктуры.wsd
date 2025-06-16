@@ -1,0 +1,50 @@
+@startuml
+' === СТИЛЬ ===
+skinparam backgroundColor #F8FBFF
+skinparam node {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontColor #0D47A1
+  FontSize 15
+}
+skinparam cloud {
+  BackgroundColor #FFF3E0
+  BorderColor #FFA726
+  FontColor #E65100
+}
+skinparam artifact {
+  BackgroundColor #E8F5E9
+  BorderColor #43A047
+  FontColor #1B5E20
+}
+skinparam ArrowColor #1976D2
+
+title <b><size:20>Развертывание инфраструктуры банковской NLP-системы</size></b>
+
+node "Kubernetes Cluster" {
+  node "NLP Service 1" as nlp1
+  node "NLP Service 2" as nlp2
+  artifact "Redis Cache" as redis
+  artifact "PostgreSQL" as pg
+}
+
+node "Monitoring" {
+  node "Prometheus"
+  node "Grafana"
+}
+
+cloud "Cloud Storage" {
+  node "S3 Models"
+}
+
+nlp1 --> redis : Кеширование
+nlp2 --> redis : Кеширование
+nlp1 --> pg : Сохранение данных
+nlp2 --> pg : Сохранение данных
+Prometheus --> nlp1 : Метрики
+Prometheus --> nlp2 : Метрики
+Grafana --> Prometheus : Визуализация
+"S3 Models" --> nlp1 : Загрузка моделей
+"S3 Models" --> nlp2 : Загрузка моделей
+
+@enduml

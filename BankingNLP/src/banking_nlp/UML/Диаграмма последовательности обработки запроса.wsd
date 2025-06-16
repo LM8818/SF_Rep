@@ -1,0 +1,32 @@
+@startuml
+' === СТИЛЬ ===
+skinparam backgroundColor #F8FBFF
+skinparam sequence {
+  ArrowColor #1976D2
+  LifeLineBorderColor #1976D2
+  LifeLineBackgroundColor #E3F2FD
+  ParticipantBorderColor #1976D2
+  ParticipantBackgroundColor #E3F2FD
+  ActorBorderColor #1976D2
+  ActorBackgroundColor #BBDEFB
+  FontSize 15
+}
+
+title <b><size:20>Последовательность обработки клиентского запроса</size></b>
+
+actor Клиент as Client #BBDEFB
+participant "API Gateway" as api #E3F2FD
+participant "Preprocessor" as pre #E3F2FD
+participant "Classifier" as cls #E3F2FD
+participant "Database" as db #E3F2FD
+
+Client -> api: POST /analyze
+api -> pre: Нормализация текста
+pre -> cls: Классификация
+cls -> db: Сохранение результата
+db --> cls: Подтверждение
+cls --> pre: Результат
+pre --> api: Ответ
+api --> Client: 200 OK
+
+@enduml

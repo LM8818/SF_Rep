@@ -1,0 +1,34 @@
+@startuml
+' === СТИЛЬ ===
+skinparam backgroundColor #F8FBFF
+skinparam usecase {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontColor #0D47A1
+  FontSize 15
+}
+skinparam actor {
+  BackgroundColor #BBDEFB
+  BorderColor #1976D2
+  FontColor #0D47A1
+}
+
+title <b><size:20>Варианты использования банковской NLP-системы</size></b>
+
+left to right direction
+actor Оператор #BBDEFB
+actor Админ #BBDEFB
+
+rectangle "Банковская NLP Система" as system {
+  usecase (Анализ тональности) as UC1
+  usecase (Классификация тематик) as UC2
+  usecase (Генерация отчетов) as UC3
+  usecase (Мониторинг системы) as UC4
+
+  Оператор --> UC1
+  Оператор --> UC2
+  Оператор --> UC3
+  Админ --> UC4
+}
+
+@enduml
