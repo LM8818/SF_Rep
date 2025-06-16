@@ -1,74 +1,10 @@
-# Основные библиотеки для ML/NLP
-torch>=2.0.0,<2.2.0
-transformers>=4.35.0,<4.40.0
-datasets>=2.14.0
-tokenizers>=0.15.0
-
-# Обработка русского языка (совместимые с Python 3.12)
-pymorphy2>=0.9.1
-pymorphy2-dicts-ru>=2.4.417127.4579844
-natasha>=1.6.0
-razdel>=0.5.0
-
-# Обработка текста и NLP
-nltk>=3.8.1
-scikit-learn>=1.3.0,<1.4.0
-
-# Аугментация данных (без spaCy для совместимости)
-nlpaug>=1.1.11
-textblob>=0.17.1
-
-# Работа с данными
-pandas>=2.0.0,<2.2.0
-numpy>=1.24.0,<1.26.0
-
-# Конфигурация и логирование
-pyyaml>=6.0.0
-python-dotenv>=1.0.0
-
-# Веб-фреймворк для API
-fastapi>=0.104.0
-uvicorn[standard]>=0.24.0
-pydantic>=2.5.0
-
-# Мониторинг и метрики
-prometheus-client>=0.19.0
-psutil>=5.9.0
-
-# Визуализация и анализ
-matplotlib>=3.7.0,<3.8.0
-seaborn>=0.12.0
-plotly>=5.15.0
-
-# Работа с базами данных
-sqlalchemy>=2.0.0
-psycopg2-binary>=2.9.0
-
-# Потоковая обработка
-kafka-python>=2.0.2
-
-# Безопасность и аутентификация
-cryptography>=41.0.0
-bcrypt>=4.1.0
-
-# Утилиты
-tqdm>=4.65.0
-click>=8.1.0
-requests>=2.31.0
-
-# Тестирование и качество кода
-pytest>=7.4.0
-pytest-cov>=4.1.0
-pytest-asyncio>=0.21.0
-black>=23.7.0
-flake8>=6.0.0
-mypy>=1.5.0
-
-# Развертывание и мониторинг
-gunicorn>=21.2.0
-redis>=5.0.0
-
-# Дополнительные библиотеки для банковского NLP
-dateparser>=1.1.8
-phonenumbers>=8.13.0
-email-validator>=2.1.0
+# Core dependencies for production
+spacy>=3.4.0,<4.0.0
+pandas>=1.5.0,<2.0.0
+numpy>=1.21.0,<2.0.0
+scikit-learn>=1.1.0,<2.0.0
+pydantic>=1.10.0,<2.0.0
+click>=8.0.0,<9.0.0
+pyyaml>=6.0,<7.0.0
+tqdm>=4.64.0,<5.0.0
+loguru>=0.6.0,<1.0.0

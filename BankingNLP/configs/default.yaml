@@ -1,0 +1,36 @@
+# Banking NLP Toolkit - Default Configuration
+
+model:
+  name: "ru_core_news_md"
+  custom_components:
+    - "banking_classifier"
+    - "entity_ruler"
+  max_length: 1000000
+  batch_size: 100
+
+classification:
+  threshold: 0.7
+  labels:
+    - "transfer"
+    - "payment"
+    - "loan"
+    - "deposit"
+    - "statement"
+    - "contract"
+    - "other"
+  use_confidence_scores: true
+
+processing:
+  lowercase: true
+  remove_punctuation: false
+  remove_stopwords: false
+  lemmatize: true
+  min_token_length: 2
+  max_token_length: 50
+
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name} | {message}"
+  file_path: null
+  rotation: "1 day"
+  retention: "30 days"

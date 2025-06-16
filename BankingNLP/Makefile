@@ -1,93 +1,69 @@
-# Banking NLP System - Makefile
-.PHONY: help install test clean run docker-build docker-run format lint
+# Banking NLP Toolkit - Development Makefile
 
-# Цвета для вывода
-GREEN := \033[32m
-YELLOW := \033[33m
-RED := \033[31m
-RESET := \033[0m
+.PHONY: help install install-dev test lint format clean build docs
 
-# По умолчанию показываем help
-help:
-	@echo "$(GREEN)Banking NLP System - Доступные команды:$(RESET)"
-	@echo "  $(YELLOW)install$(RESET)      - Установка зависимостей"
-	@echo "  $(YELLOW)run$(RESET)          - Запуск приложения"
-	@echo "  $(YELLOW)test$(RESET)         - Запуск тестов"
-	@echo "  $(YELLOW)format$(RESET)       - Форматирование кода"
-	@echo "  $(YELLOW)lint$(RESET)         - Проверка качества кода"
-	@echo "  $(YELLOW)docker-build$(RESET) - Сборка Docker образа"
-	@echo "  $(YELLOW)docker-run$(RESET)   - Запуск в Docker"
-	@echo "  $(YELLOW)clean$(RESET)        - Очистка временных файлов"
+help:  ## Show this help message
+	@echo "Available commands:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# Установка зависимостей
-install:
-	@echo "$(GREEN)Установка зависимостей...$(RESET)"
-	python -m venv .venv
-	.venv/bin/pip install --upgrade pip
-	.venv/bin/pip install -r requirements.txt
+install:  ## Install package for production
+	pip install -e .
 
-# Запуск приложения
-run:
-	@echo "$(GREEN)Запуск Banking NLP System...$(RESET)"
-	python -m src.banking_nlp.main
+install-dev:  ## Install package for development
+	pip install -e ".[dev]"
+	pre-commit install
+	python -m spacy download ru_core_news_md
 
-# Запуск тестов
-test:
-	@echo "$(GREEN)Запуск тестов...$(RESET)"
-	pytest tests/ -v
+test:  ## Run tests
+	pytest tests/ -v --cov=banking_nlp --cov-report=html --cov-report=term
 
-# Запуск тестов с покрытием
-test-coverage:
-	@echo "$(GREEN)Запуск тестов с покрытием...$(RESET)"
-	pytest --cov=src/banking_nlp --cov-report=html tests/
+test-unit:  ## Run unit tests only
+	pytest tests/unit/ -v
 
-# Форматирование кода
-format:
-	@echo "$(GREEN)Форматирование кода...$(RESET)"
-	black src/ tests/
-	isort src/ tests/
+test-integration:  ## Run integration tests only
+	pytest tests/integration/ -v
 
-# Проверка качества кода
-lint:
-	@echo "$(GREEN)Проверка качества кода...$(RESET)"
-	flake8 src/ tests/
-	mypy src/
-	black --check src/ tests/
+lint:  ## Run linting checks
+	flake8 banking_nlp/ tests/
+	mypy banking_nlp/ --ignore-missing-imports
+	bandit -r banking_nlp/
 
-# Сборка Docker образа
-docker-build:
-	@echo "$(GREEN)Сборка Docker образа...$(RESET)"
-	docker build -t banking-nlp:latest .
+format:  ## Format code
+	black banking_nlp/ tests/
+	isort banking_nlp/ tests/
 
-# Запуск в Docker
-docker-run:
-	@echo "$(GREEN)Запуск в Docker...$(RESET)"
-	docker-compose up -d
+format-check:  ## Check code formatting
+	black --check banking_nlp/ tests/
+	isort --check-only banking_nlp/ tests/
 
-# Остановка Docker
-docker-stop:
-	@echo "$(GREEN)Остановка Docker...$(RESET)"
-	docker-compose down
-
-# Очистка временных файлов
-clean:
-	@echo "$(GREEN)Очистка временных файлов...$(RESET)"
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	rm -rf .pytest_cache/
-	rm -rf htmlcov/
-	rm -rf dist/
+clean:  ## Clean build artifacts
 	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf htmlcov/
+	rm -rf .coverage
+	rm -rf .pytest_cache/
+	rm -rf .mypy_cache/
+	find . -type d -name __pycache__ -delete
+	find . -type f -name "*.pyc" -delete
 
-# Создание production сборки
-build-prod:
-	@echo "$(GREEN)Создание production сборки...$(RESET)"
+build:  ## Build package
 	python -m build
 
-# Проверка безопасности
-security-check:
-	@echo "$(GREEN)Проверка безопасности...$(RESET)"
-	safety check
-	bandit -r src/
+docs:  ## Build documentation
+	cd docs && make html
+
+docs-serve:  ## Serve documentation locally
+	cd docs/_build/html && python -m http.server 8000
+
+run-example:  ## Run example usage
+	banking-nlp process --input examples/sample.txt --config configs/default.yaml
+
+train-example:  ## Train example model
+	banking-nlp train --config configs/training.yaml --data examples/training_data.json
+
+setup-project:  ## Initial project setup
+	make install-dev
+	make format
+	make test
+	@echo "Project setup complete!"
