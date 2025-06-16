@@ -1,5 +1,5 @@
-@startuml
-' === СТИЛЬ ===
+@startuml развертывание инфраструктуры банковской NLP-системы
+' === СТИЛЬ === 
 skinparam backgroundColor #F8FBFF
 skinparam node {
   BackgroundColor #E3F2FD

@@ -1,4 +1,4 @@
-@startuml
+@startuml Компоненты банковской NLP-системы
 ' === СТИЛЬ ===
 skinparam backgroundColor #F8FBFF
 skinparam componentStyle rectangle

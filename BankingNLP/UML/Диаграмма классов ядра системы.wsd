@@ -1,4 +1,4 @@
-@startuml
+@startuml классы ядра банковской NLP-системы
 ' === СТИЛЬ ===
 skinparam backgroundColor #F8FBFF
 skinparam class {
