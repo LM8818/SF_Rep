@@ -101,4 +101,5 @@ data/encrypted/
 .env.production
 
 # Docker volumes
-docker-data/
+docker-data/BankingNLP/src/banking_nlp/*.tar.gz
+BankingNLP/src/banking_nlp/*.tar.gz
