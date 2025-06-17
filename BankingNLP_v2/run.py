@@ -1,17 +1,12 @@
+import os
+import sys
+import subprocess
 import logging
 import logging.config
 import yaml
-import sys
-
-# Импортируем модули пайплайна
-from src.data.load_data import load_transcripts
-from src.features.build_features import build_features
-from src.models.train_model import train_model
-from src.models.predict_model import predict
-from src.evaluation.evaluate import evaluate
 
 def setup_logging():
-    """Настраивает логирование из файла logging.yaml, если он есть."""
+    """Настраивает логирование из файла logging.yaml или использует базовую настройку."""
     try:
         with open('logging.yaml') as f:
             config = yaml.safe_load(f)
@@ -20,20 +15,39 @@ def setup_logging():
         logging.basicConfig(level=logging.INFO)
         logging.getLogger().warning("Не удалось загрузить logging.yaml, используется базовая настройка логирования.")
 
+def create_venv_and_install():
+    """Создаёт виртуальную среду и устанавливает зависимости из requirements.txt."""
+    venv_dir = "venv"
+    if not os.path.exists(venv_dir):
+        print("Создаётся виртуальная среда...")
+        subprocess.check_call([sys.executable, "-m", "venv", venv_dir])
+    python_bin = os.path.join(venv_dir, "Scripts" if os.name == "nt" else "bin", "python")
+    pip_bin = os.path.join(venv_dir, "Scripts" if os.name == "nt" else "bin", "pip")
+    print("Устанавливаются зависимости из requirements.txt...")
+    subprocess.check_call([pip_bin, "install", "-r", "requirements.txt"])
+    print(f"Используйте {python_bin} для запуска пайплайна в виртуальной среде.")
+
 def main(step='all'):
-    """
-    Запускает пайплайн BankingNLP.
-    step: 'all' или одна из стадий: data, features, train, predict, eval
-    """
     logger = logging.getLogger("run")
     try:
+        if step == 'venv':
+            create_venv_and_install()
+            logger.info("Виртуальная среда создана и зависимости установлены.")
+            return
+        # Импортируем только после установки зависимостей
+        from src.data.load_data import load_transcripts
+        from src.features.build_features import build_features
+        from src.models.train_model import train_model
+        from src.models.predict_model import predict
+        from src.evaluation.evaluate import evaluate
+
         if step in ('all', 'data'):
             logger.info("=== Загрузка и подготовка данных ===")
             df = load_transcripts()
         if step in ('all', 'features'):
             logger.info("=== Генерация признаков ===")
             import pandas as pd
-            df = pd.read_csv('data/processed/transcripts.csv')
+            df = pd.read_csv('data/processed/cleaned_transcripts.csv')
             df = build_features(df)
             df.to_csv('data/processed/features.csv', index=False)
         if step in ('all', 'train'):
@@ -51,6 +65,6 @@ def main(step='all'):
 
 if __name__ == "__main__":
     setup_logging()
-    # Поддержка CLI-аргументов: python run.py [all|data|features|train|predict|eval]
+    # Новый режим: python run.py venv — создать виртуальную среду и установить зависимости
     step = sys.argv[1] if len(sys.argv) > 1 else 'all'
     main(step)
