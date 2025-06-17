@@ -6,6 +6,29 @@ import sqlite3
 
 import logging.config
 import yaml
+import re
+
+
+with open('src/config/config.yaml', encoding='utf-8') as f:
+    config = yaml.safe_load(f)
+
+STOP_WORDS = set(config['text_preprocessing']['stop_words'])
+ANONYMIZATION_PATTERNS = config['text_preprocessing']['anonymization_patterns']
+
+PHONE_PATTERN = re.compile(ANONYMIZATION_PATTERNS['phone'])
+ACCOUNT_PATTERN = re.compile(ANONYMIZATION_PATTERNS['account'])
+EMAIL_PATTERN = re.compile(ANONYMIZATION_PATTERNS['email'])
+
+def anonymize_text(text: str) -> str:
+    text = PHONE_PATTERN.sub('[PHONE]', text)
+    text = ACCOUNT_PATTERN.sub('[ACCOUNT]', text)
+    text = EMAIL_PATTERN.sub('[EMAIL]', text)
+    return text
+
+def remove_stopwords(text: str, stopwords: set) -> str:
+    return ' '.join([word for word in text.split() if word not in stopwords])
+
+
 
 def setup_logging():
     with open('logging.yaml') as f:
