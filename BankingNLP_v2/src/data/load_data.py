@@ -35,7 +35,7 @@ def validate_schema(df, required_columns):
     missing = [col for col in required_columns if col not in df.columns]
     if missing:
         logger.error(f'Отсутствуют обязательные столбцы: {missing}')
-        raise ValueError(f'Отсутствуют обязательные столбцы: {missing}')
+        raise ValueError(f'Отсутствуют обязательные столбцы: {missing}') 
 
 def clean_and_normalize(df):
     """Очищает и нормализует данные: удаляет пропуски, приводит текст к нижнему регистру."""
@@ -102,6 +102,7 @@ def load_transcripts():
     Проверяет схему и нормализует данные.
     """
     df = get_data_from_db()
+    validate_schema(df, REQUIRED_COLUMNS)
     if df is None:
         df = get_data_from_csv()
     if df is None:
