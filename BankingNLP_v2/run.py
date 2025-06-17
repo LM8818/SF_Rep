@@ -22,7 +22,7 @@ def setup_logging():
 
 def main(step='all'):
     """
-    Запускает пайплайн BankingNLPv1.
+    Запускает пайплайн BankingNLP.
     step: 'all' или одна из стадий: data, features, train, predict, eval
     """
     logger = logging.getLogger("run")

@@ -12,6 +12,14 @@ import seaborn as sns
 import joblib
 import json
 
+import logging.config
+import yaml
+
+def setup_logging():
+    with open('logging.yaml') as f:
+        config = yaml.safe_load(f)
+    logging.config.dictConfig(config)
+
 # Для explainability (если требуется)
 try:
     import shap

@@ -4,6 +4,14 @@ from logging.handlers import RotatingFileHandler
 import pandas as pd
 import sqlite3
 
+import logging.config
+import yaml
+
+def setup_logging():
+    with open('logging.yaml') as f:
+        config = yaml.safe_load(f)
+    logging.config.dictConfig(config)
+
 # Настройка логирования с ротацией и поддержкой JSON-формата
 log_formatter = logging.Formatter(
     '{"time": "%(asctime)s", "level": "%(levelname)s", "module": "%(module)s", "message": "%(message)s"}'
