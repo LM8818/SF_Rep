@@ -1,0 +1,68 @@
+@startuml Компоненты_NLP_без_ASR
+skinparam backgroundColor #F8FBFF
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #E3F2FD
+  BorderColor     #1976D2
+  FontColor       #0D47A1
+  FontSize        15
+}
+skinparam cloud {
+  BackgroundColor #FFF3E0
+  BorderColor     #FFA726
+  FontColor       #E65100
+}
+skinparam queue {
+  BackgroundColor #E8F5E9
+  BorderColor     #43A047
+  FontColor       #1B5E20
+}
+skinparam database {
+  BackgroundColor #E8F5E9
+  BorderColor     #00695C
+  FontColor       #004D40
+}
+skinparam ArrowColor #1976D2
+skinparam ArrowThickness 2
+
+title <b><size:20>Компоненты банковской NLP-системы (только текст)</size></b>
+legend left
+<b>Синие прямоугольники</b> — внутренние сервисы  
+<b>Оранжевые облака</b> — внешние системы  
+<b>Бирюзовые базы</b> — хранилища данных  
+endlegend
+
+package "Банковская NLP-платформа" {
+  [API Gateway]            as api
+  [Data Preprocessing]     as pre
+  component "ruBERT /\nBanking77/FinBERT" as rubert
+  component "Topic\nClassifier"      as topic
+  component "Sentiment\nAnalyzer"    as senti
+  component "Insight\nEngine"        as insight
+  database  "Feature Store"          as feat
+  database  "Operational DB"         as db
+  [Monitoring & Logging]   as mon
+}
+
+cloud "CRM система"        as crm
+cloud "Data Lake (S3/MinIO)" as lake
+
+crm  --> api   : Запросы (текст)
+lake --> pre   : Исторические данные
+
+api  --> pre   : Текстовые транскрипты
+pre  --> rubert: Токенизация/эмбеддинги
+rubert --> topic
+rubert --> senti
+topic  --> insight
+senti  --> insight
+insight --> db      : Результаты/инсайты
+pre    --> feat     : Фичи/мета-данные
+api    --> mon
+topic  --> mon
+senti  --> mon
+insight --> mon
+mon    --> db       : Логи, метрики
+api    --> crm      : Ответы/инсайты
+
+@enduml
