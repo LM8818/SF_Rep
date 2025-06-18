@@ -84,4 +84,15 @@ pip install -e .
 
 python run.py train –config src/config/config.yaml
 
+
+# 1. Собрать и поднять
+docker compose up --build -d
+
+# 2. Проверить
+open http://localhost:8080        # SPA + API по /api/v1/*
+open http://localhost:8080/docs   # Swagger
+
+# 3. Логи
+docker compose logs -f web
+
 > 

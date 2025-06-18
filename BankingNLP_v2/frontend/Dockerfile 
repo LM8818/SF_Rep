@@ -1,0 +1,13 @@
+# Stage 1 — build SPA
+FROM node:20-alpine AS builder
+WORKDIR /frontend
+COPY frontend/package*.json .
+RUN npm ci --omit=dev
+COPY frontend/ .
+RUN npm run build
+
+# Stage 2 — отдача статики
+FROM nginx:1.27-alpine
+COPY --from=builder /frontend/dist /usr/share/nginx/html
+EXPOSE 80
+HEALTHCHECK CMD wget --spider -q http://localhost || exit 1

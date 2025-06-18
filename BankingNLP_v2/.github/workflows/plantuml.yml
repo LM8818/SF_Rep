@@ -1,0 +1,29 @@
+name: Render PlantUML diagrams
+on:
+  push:
+    paths:                           # триггер только при изменении .puml
+      - "**.puml"
+    branches: [ main ]              # или укажите нужную ветку
+jobs:
+  build-diagrams:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Клонируем репозиторий
+    - name: Checkout repo
+      uses: actions/checkout@v4       # стандартный шаг [6]
+
+    # 2. Рендерим *.puml → SVG и PNG
+    - name: Render PlantUML
+      uses: racklet/render-plantuml-action@v3   # GitHub Marketplace [1]
+      with:
+        formats: png,svg              # можно svg или png
+        sub-dirs: docs/uml,docs/uml   # где искать .puml (пример)
+
+    # 3. Коммитим готовые файлы (опционально)
+    - name: Commit rendered diagrams
+      uses: abekoh/commit-plantuml-action@1.0.3 # Marketplace-action [2]
+      with:
+        botEmail: diagrams-bot@example.com
+        botGithubToken: ${{ secrets.GITHUB_TOKEN }}
+        enableReviewComment: false

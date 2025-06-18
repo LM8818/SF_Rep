@@ -1,0 +1,87 @@
+@startuml
+!define BANKING_BLUE #1E3A8A
+!define BANKING_LIGHT_BLUE #3B82F6
+!define BANKING_GREEN #059669
+!define BANKING_LIGHT_GREEN #10B981
+!define BANKING_ORANGE #EA580C
+!define BANKING_PURPLE #7C3AED
+
+title <size:16><color:#1E3A8A><b>🏦 Banking NLP v2.0: Архитектура развертывания</b></color></size>
+
+skinparam backgroundColor #F8FAFC
+skinparam handwritten false
+skinparam roundcorner 15
+skinparam shadowing true
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam defaultFontColor #1E3A8A
+
+skinparam NodeBackgroundColor #EFF6FF
+skinparam NodeBorderColor #3B82F6
+skinparam NodeFontColor #1E3A8A
+skinparam NodeFontSize 11
+skinparam NodeFontStyle bold
+
+skinparam ComponentBackgroundColor #F0FDF4
+skinparam ComponentBorderColor #10B981
+skinparam ComponentFontColor #1E3A8A
+
+skinparam CloudBackgroundColor #FFFBEB
+skinparam CloudBorderColor #F59E0B
+
+skinparam DatabaseBackgroundColor #F0FDF4
+skinparam DatabaseBorderColor #10B981
+
+skinparam FrameBackgroundColor #F8F4FF
+skinparam FrameBorderColor #7C3AED
+
+skinparam ArrowColor #3B82F6
+skinparam ArrowThickness 2
+
+node "🔧 **GitHub Actions CI/CD**" as CI #EFF6FF {
+  component "🧪 **pytest**\nТестирование" as TEST
+  component "🐳 **Build Docker**\nСборка образов" as BUILD
+  component "🔍 **Security Scan**\nПроверка безопасности" as SCAN
+}
+
+cloud "📦 **Docker Registry**\nХранилище образов" as REG #FFFBEB
+
+frame "☸️ **Production Kubernetes Cluster**" as K8S #F8F4FF {
+  node "🌐 **Web Tier**" #EFF6FF {
+    component "🚀 **FastAPI + Gunicorn**\nAPI Gateway" as WEB
+    component "💻 **Frontend**\nReact/Vue SPA" as FRONTEND
+  }
+  
+  node "⚙️ **Processing Tier**" #F0FDF4 {
+    component "🔄 **Celery Workers**\nBackground Tasks" as WORKER
+    component "🧠 **ML Models**\nNLP Processing" as ML
+  }
+  
+  node "💾 **Data Tier**" #F0FDF4 {
+    database "🗄️ **PostgreSQL**\nПервичная БД" as PG
+    queue "📨 **Kafka**\nОчередь сообщений" as KAFKA
+    database "📊 **Redis**\nКэш и сессии" as REDIS
+  }
+  
+  node "📊 **Monitoring Stack**" #FFFBEB {
+    cloud "📈 **Grafana + Prometheus**\nМетрики и алерты" as MONITOR
+    cloud "📋 **ELK Stack**\nЛогирование" as LOGS
+  }
+}
+
+CI --> REG : 📤 **push images**
+note on link #FFFBEB : Автоматическая сборка\nпри каждом commit
+
+REG --> K8S : 📥 **pull & deploy**
+note on link #F0FDF4 : Blue-Green\nDeployment
+
+WEB ..> PG : 🔗 database queries
+WORKER ..> KAFKA : 📨 consume tasks
+WEB ..> KAFKA : 📤 publish events
+ML ..> REDIS : ⚡ model cache
+K8S ..> MONITOR : 📊 metrics export
+K8S ..> LOGS : 📝 log aggregation
+
+note bottom of K8S #F8FAFC : <b>Автомасштабирование:</b> CPU/Memory\n<b>Отказоустойчивость:</b> Multi-AZ\n<b>Безопасность:</b> Network Policies + RBAC
+note top of CI #F8FAFC : <b>CI/CD Pipeline:</b>\nНепрерывная интеграция и доставка
+@enduml
