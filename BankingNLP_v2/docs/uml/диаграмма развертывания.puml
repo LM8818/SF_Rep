@@ -1,0 +1,32 @@
+@startuml
+!theme spacelab
+title Архитектура развертывания BankingNLP_v2
+
+skinparam node {
+  BackgroundColor #E8F5E8
+  FontColor #2E7D32
+  BorderColor #4CAF50
+  FontSize 12
+  FontStyle bold
+}
+
+skinparam component {
+  BackgroundColor #FFF3E0
+  FontColor #1E88E5
+  BorderColor #FF9800
+}
+
+node "☸️ Production Cluster" {
+  component "🚀 FastAPI" as web #LightBlue
+  component "📦 PostgreSQL" as db #LightGreen
+}
+
+cloud "☁️ AWS" {
+  component "🔒 VPC" as vpc #LightYellow
+  component "🔐 IAM" as iam #LightCoral
+}
+
+web --> db : JDBC
+vpc --> web : HTTP/HTTPS
+iam --> db : Auth
+@enduml
