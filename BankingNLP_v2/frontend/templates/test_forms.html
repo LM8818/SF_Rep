@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}Тестирование - Banking NLP v2.0{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-card {
+        display: none;
+        margin-top: 20px;
+    }
+    .loading {
+        display: none;
+    }
+    .confidence-bar {
+        height: 20px;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h2 class="mb-4">Тестирование NLP анализа</h2>
+        
+        <!-- Форма для анализа одного разговора -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Анализ текста разговора</h5>
+            </div>
+            <div class="card-body">
+                <form id="analyzeForm">
+                    <div class="mb-3">
+                        <label for="conversationText" class="form-label">Текст разговора</label>
+                        <textarea class="form-control" id="conversationText" rows="6" 
+                                placeholder="Введите текст разговора с клиентом для анализа..." required></textarea>
+                        <div class="form-text">Пример: "Добрый день! Хочу узнать про ипотечные программы. Слышал у вас хорошие условия."</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="clientId" class="form-label">ID клиента (опционально)</label>
+                            <input type="text" class="form-control" id="clientId" placeholder="12345">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="channel" class="form-label">Канал обращения</label>
+                            <select class="form-select" id="channel">
+                                <option value="чат">Чат</option>
+                                <option value="звонок">Звонок</option>
+                                <option value="email">Email</option>
+                                <option value="мессенджер">Мессенджер</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                            Анализировать
+                        </button>
+                        <button type="button" class="btn btn-secondary ms-2" onclick="loadSampleText()">
+                            Загрузить пример
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Результаты анализа -->
+                <div id="analysisResult" class="result-card">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">Результаты анализа</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Основная информация</h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Тема:</strong></td>
+                                            <td id="resultTheme"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Эмоция:</strong></td>
+                                            <td id="resultEmotion"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Удовлетворенность:</strong></td>
+                                            <td id="resultSatisfaction"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Уверенность модели</h6>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" id="confidenceBar"></div>
+                                    </div>
+                                    <small class="text-muted" id="confidenceText"></small>
+                                    
+                                    <h6 class="mt-3">Упомянутые продукты</h6>
+                                    <div id="resultProducts"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма для пакетного анализа -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Пакетный анализ</h5>
+            </div>
+            <div class="card-body">
+                <form id="batchAnalyzeForm">
+                    <div class="mb-3">
+                        <label for="batchText" class="form-label">Тексты разговоров (по одному на строку)</label>
+                        <textarea class="form-control" id="batchText" rows="8" 
+                                placeholder="Разговор 1: Добрый день, хочу оформить карту&#10;Разговор 2: У меня проблема с переводом&#10;Разговор 3: Интересует ипотека на квартиру" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                        Анализировать пакет
+                    </button>
+                </form>
+
+                <!-- Результаты пакетного анализа -->
+                <div id="batchResult" class="result-card">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning">
+                            <h6 class="mb-0">Результаты пакетного анализа</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="batchResultContent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма для переобучения модели -->
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Переобучение модели</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>Внимание!</strong> Переобучение модели может занять несколько минут и повлиять на производительность системы.
+                </div>
+                <button type="button" class="btn btn-danger" onclick="retrainModel()">
+                    <i class="fas fa-cog"></i> Запустить переобучение
+                </button>
+                <div id="retrainStatus" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Примеры текстов для тестирования
+const sampleTexts = [
+    "Добрый день! Хочу узнать про ипотечные программы. Слышал у вас хорошие условия по процентной ставке.",
+    "У меня проблема с картой, не могу снять деньги в банкомате. Очень недоволен обслуживанием!",
+    "Здравствуйте, интересует открытие вклада. Какие у вас есть предложения на сегодня?",
+    "Хочу оформить страховку на автомобиль. Можете рассказать про ваши программы?",
+    "Очень доволен работой с вашим банком. Спасибо за качественное обслуживание!"
+];
+
+function loadSampleText() {
+    const randomText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+    document.getElementById('conversationText').value = randomText;
+}
+
+// Обработка формы анализа
+document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const loading = submitBtn.querySelector('.loading');
+    const resultDiv = document.getElementById('analysisResult');
+    
+    // Показать индикатор загрузки
+    loading.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    resultDiv.style.display = 'none';
+    
+    const requestData = {
+        text: document.getElementById('conversationText').value,
+        client_id: document.getElementById('clientId').value || null,
+        channel: document.getElementById('channel').value
+    };
+    
+    try {
+        const response = await fetch('/api/v1/nlp/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Если используется аутентификация
+            },
+            body: JSON.stringify(requestData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            displayAnalysisResult(result);
+        } else {
+            throw new Error('Ошибка при анализе: ' + response.statusText);
+        }
+    } catch (error) {
+        alert('Ошибка: ' + error.message);
+    } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+});
+
+function displayAnalysisResult(result) {
+    document.getElementById('resultTheme').textContent = result.theme;
+    document.getElementById('resultEmotion').textContent = result.emotion;
+    document.getElementById('resultSatisfaction').textContent = result.satisfaction_score + '/5';
+    
+    // Уверенность модели
+    const confidence = Math.round(result.confidence * 100);
+    document.getElementById('confidenceBar').style.width = confidence + '%';
+    document.getElementById('confidenceText').textContent = confidence + '%';
+    
+    // Продукты
+    const productsDiv = document.getElementById('resultProducts');
+    if (result.products && result.products.length > 0) {
+        productsDiv.innerHTML = result.products.map(product => 
+            `<span class="badge bg-primary me-1">${product}</span>`
+        ).join('');
+    } else {
+        productsDiv.innerHTML = '<span class="text-muted">Продукты не обнаружены</span>';
+    }
+    
+    document.getElementById('analysisResult').style.display = 'block';
+}
+
+// Обработка пакетного анализа
+document.getElementById('batchAnalyzeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const loading = submitBtn.querySelector('.loading');
+    const resultDiv = document.getElementById('batchResult');
+    
+    loading.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    resultDiv.style.display = 'none';
+    
+    const texts = document.getElementById('batchText').value.split('\n').filter(t => t.trim());
+    const requests = texts.map(text => ({ text: text.trim() }));
+    
+    try {
+        const response = await fetch('/api/v1/nlp/batch-analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(requests)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            displayBatchResult(result.results);
+        } else {
+            throw new Error('Ошибка при пакетном анализе: ' + response.statusText);
+        }
+    } catch (error) {
+        alert('Ошибка: ' + error.message);
+    } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+});
+
+function displayBatchResult(results) {
+    const contentDiv = document.getElementById('batchResultContent');
+    let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>#</th><th>Тема</th><th>Эмоция</th><th>Удовлетворенность</th><th>Продукты</th></tr></thead><tbody>';
+    
+    results.forEach((result, index) => {
+        if (result.error) {
+            html += `<tr><td>${index + 1}</td><td colspan="4" class="text-danger">Ошибка: ${result.error}</td></tr>`;
+        } else {
+            const products = result.products ? result.products.join(', ') : 'Нет';
+            html += `<tr>
+                <td>${index + 1}</td>
+                <td>${result.theme}</td>
+                <td>${result.emotion}</td>
+                <td>${result.satisfaction_score}/5</td>
+                <td>${products}</td>
+            </tr>`;
+        }
+    });
+    
+    html += '</tbody></table></div>';
+    contentDiv.innerHTML = html;
+    document.getElementById('batchResult').style.display = 'block';
+}
+
+// Переобучение модели
+async function retrainModel() {
+    if (!confirm('Вы уверены, что хотите запустить переобучение модели?')) {
+        return;
+    }
+    
+    const statusDiv = document.getElementById('retrainStatus');
+    statusDiv.innerHTML = '<div class="alert alert-info">Переобучение запущено...</div>';
+    
+    try {
+        const response = await fetch('/api/v1/nlp/retrain', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            statusDiv.innerHTML = '<div class="alert alert-success">' + result.message + '</div>';
+        } else {
+            throw new Error('Ошибка при переобучении: ' + response.statusText);
+        }
+    } catch (error) {
+        statusDiv.innerHTML = '<div class="alert alert-danger">Ошибка: ' + error.message + '</div>';
+    }
+}
+</script>
+{% endblock %}

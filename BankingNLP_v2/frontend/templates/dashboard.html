@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Дашборд - Banking NLP v2.0{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Дашборд системы</h2>
+        
+        <!-- Метрики -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Обработано сегодня</h5>
+                        <h2 id="todayCount">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Средняя удовлетворенность</h5>
+                        <h2 id="avgSatisfaction">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Точность модели</h5>
+                        <h2 id="modelAccuracy">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Алерты</h5>
+                        <h2 id="alertsCount">-</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Графики -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Распределение тем</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="themesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Эмоциональная окраска</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="emotionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Загрузка данных дашборда
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/v1/analytics/dashboard');
+        const data = await response.json();
+        
+        // Обновление метрик
+        document.getElementById('todayCount').textContent = data.today_count || 0;
+        document.getElementById('avgSatisfaction').textContent = (data.avg_satisfaction || 0).toFixed(1);
+        document.getElementById('modelAccuracy').textContent = (data.model_accuracy || 0).toFixed(1) + '%';
+        document.getElementById('alertsCount').textContent = data.alerts_count || 0;
+        
+        // Создание графиков
+        createThemesChart(data.themes_distribution || {});
+        createEmotionsChart(data.emotions_distribution || {});
+        
+    } catch (error) {
+        console.error('Ошибка загрузки данных дашборда:', error);
+    }
+}
+
+function createThemesChart(data) {
+    const ctx = document.getElementById('themesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function createEmotionsChart(data) {
+    const ctx = document.getElementById('emotionsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                label: 'Количество',
+                data: Object.values(data),
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Загрузка данных при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadDashboardData);
+
+// Автообновление каждые 30 секунд
+setInterval(loadDashboardData, 30000);
+</script>
+{% endblock %}
