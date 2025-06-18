@@ -1,50 +1,47 @@
 import os
 import logging
+import logging.config
 from logging.handlers import RotatingFileHandler
 import pandas as pd
 import sqlite3
-
-import logging.config
 import yaml
 import re
 
-
+# Загрузка основной конфигурации
 with open('src/config/config.yaml', encoding='utf-8') as f:
-    config = yaml.safe_load(f)
+    main_config = yaml.safe_load(f)
 
-STOP_WORDS = set(config['text_preprocessing']['stop_words'])
-ANONYMIZATION_PATTERNS = config['text_preprocessing']['anonymization_patterns']
+# Загрузка конфигурации логирования и паттернов анонимизации
+try:
+    with open('config/logging.yaml', 'r', encoding='utf-8') as f:
+        logging_config = yaml.safe_load(f)
+        
+    # Настройка логирования
+    logging.config.dictConfig(logging_config)
+    
+    # Загрузка паттернов анонимизации
+    ANONYMIZATION_PATTERNS = logging_config['anonymization_patterns']
+    
+except FileNotFoundError:
+    # Fallback конфигурация если файл не найден
+    logging.basicConfig(level=logging.INFO)
+    ANONYMIZATION_PATTERNS = {
+        'phone': r'(\+7|8)?\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}',
+        'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+        'card': r'\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b',
+        'account': r'\b\d{20}\b'
+    }
 
+# Компиляция регулярных выражений
 PHONE_PATTERN = re.compile(ANONYMIZATION_PATTERNS['phone'])
-ACCOUNT_PATTERN = re.compile(ANONYMIZATION_PATTERNS['account'])
 EMAIL_PATTERN = re.compile(ANONYMIZATION_PATTERNS['email'])
+CARD_PATTERN = re.compile(ANONYMIZATION_PATTERNS['card'])
+ACCOUNT_PATTERN = re.compile(ANONYMIZATION_PATTERNS['account'])
 
-def anonymize_text(text: str) -> str:
-    text = PHONE_PATTERN.sub('[PHONE]', text)
-    text = ACCOUNT_PATTERN.sub('[ACCOUNT]', text)
-    text = EMAIL_PATTERN.sub('[EMAIL]', text)
-    return text
-
-def remove_stopwords(text: str, stopwords: set) -> str:
-    return ' '.join([word for word in text.split() if word not in stopwords])
-
-
-
-def setup_logging():
-    with open('logging.yaml') as f:
-        config = yaml.safe_load(f)
-    logging.config.dictConfig(config)
-
-# Настройка логирования с ротацией и поддержкой JSON-формата
-log_formatter = logging.Formatter(
-    '{"time": "%(asctime)s", "level": "%(levelname)s", "module": "%(module)s", "message": "%(message)s"}'
-)
-log_handler = RotatingFileHandler('logs/data_load.log', maxBytes=1000000, backupCount=3, encoding='utf-8')
-log_handler.setFormatter(log_formatter)
+# Получение логгера
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(log_handler)
 
+# Константы
 DB_PATH = os.getenv('BANKINGNLP_DB_PATH', 'bankingnlp.db')
 CSV_PATH = 'data/processed/transcripts.csv'
 REQUIRED_COLUMNS = [
@@ -53,18 +50,31 @@ REQUIRED_COLUMNS = [
     'duration_minutes', 'call_result', 'follow_up_required', 'region', 'channel'
 ]
 
+def anonymize_text(text: str) -> str:
+    """Анонимизирует персональные данные в тексте."""
+    text = PHONE_PATTERN.sub('[PHONE]', text)
+    text = ACCOUNT_PATTERN.sub('[ACCOUNT]', text)
+    text = EMAIL_PATTERN.sub('[EMAIL]', text)
+    text = CARD_PATTERN.sub('[CARD]', text)
+    return text
+
+def remove_stopwords(text: str, stopwords: set) -> str:
+    """Удаляет стоп-слова из текста."""
+    return ' '.join([word for word in text.split() if word not in stopwords])
+
 def validate_schema(df, required_columns):
     """Проверяет наличие обязательных столбцов в DataFrame."""
+    if df is None:
+        return
     missing = [col for col in required_columns if col not in df.columns]
     if missing:
         logger.error(f'Отсутствуют обязательные столбцы: {missing}')
-        raise ValueError(f'Отсутствуют обязательные столбцы: {missing}') 
+        raise ValueError(f'Отсутствуют обязательные столбцы: {missing}')
 
 def clean_and_normalize(df):
-    """Очищает и нормализует данные: удаляет пропуски, приводит текст к нижнему регистру."""
+    """Очищает и нормализует данные."""
     if 'conversation_text' in df.columns:
         df['conversation_text'] = df['conversation_text'].astype(str).str.lower().str.replace(r'[^\w\s]', '', regex=True)
-    # Добавьте другие шаги нормализации по необходимости
     df = df.dropna(subset=['conversation_id', 'conversation_text'])
     return df
 
@@ -125,13 +135,22 @@ def load_transcripts():
     Проверяет схему и нормализует данные.
     """
     df = get_data_from_db()
-    validate_schema(df, REQUIRED_COLUMNS)
+    if df is not None:
+        validate_schema(df, REQUIRED_COLUMNS)
+    
     if df is None:
         df = get_data_from_csv()
+        if df is not None:
+            validate_schema(df, REQUIRED_COLUMNS)
+    
     if df is None:
         df = generate_and_save_data()
-    validate_schema(df, REQUIRED_COLUMNS)
+        validate_schema(df, REQUIRED_COLUMNS)
+    
     df = clean_and_normalize(df)
+    
+    # Создаем директорию если не существует
+    os.makedirs('data/processed', exist_ok=True)
     df.to_csv('data/processed/transcripts_versioned.csv', index=False)
     logger.info(f'Загружено {len(df)} строк, версия датасета сохранена.')
     return df

@@ -6,6 +6,13 @@ import os
 import logging.config
 import yaml
 
+
+# Создаем директорию для логов если она не существует
+os.makedirs('logs', exist_ok=True)
+
+# Теперь создаем handler
+log_handler = RotatingFileHandler('logs/features.log', maxBytes=1000000, backupCount=3, encoding='utf-8')
+
 def setup_logging():
     with open('logging.yaml') as f:
         config = yaml.safe_load(f)

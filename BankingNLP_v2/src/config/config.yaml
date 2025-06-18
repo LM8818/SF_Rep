@@ -1,3 +1,29 @@
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  default:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: default
+    stream: ext://sys.stdout
+  
+  file:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: default
+    filename: logs/app.log
+
+loggers:
+  root:
+    level: INFO
+    handlers: [console, file]
+
 text_preprocessing:
   stop_words:
     - и
@@ -151,7 +177,8 @@ text_preprocessing:
     - конечно
     - всю
     - между
-  anonymization_patterns:
-    phone: '\\b(?:\\+7|8)?[\\s\\-]?\\(?\\d{3}\\)?[\\s\\-]?\\d{3}[\\s\\-]?\\d{2}[\\s\\-]?\\d{2}\\b'
-    account: '\\b\\d{16,20}\\b'
-    email: '\\b[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,4}\\b'
+
+anonymization_patterns:
+  phone: '(\+7|8)?\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}'
+  email: '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+  card: '\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b'
