@@ -1,19 +1,33 @@
-pandas>=2.2.2
-numpy>=1.26.4
-scikit-learn>=1.4.2
+
 matplotlib>=3.8.4
 seaborn>=0.13.2
 joblib>=1.4.2
 pymorphy2>=0.9.1
-pyyaml>=6.0.1
 faker>=25.2.0
 tqdm>=4.66.4
 nltk>=3.8.1
-spacy>=3.7.4
 openpyxl>=3.1.2
 xlrd>=2.0.1
 sqlalchemy>=2.0.30
 requests>=2.32.2
-pytest>=8.2.2
 jupyter>=1.0.0
 notebook>=7.2.0
+
+# Основные зависимости
+pandas>=1.5.0
+numpy>=1.24.0
+scikit-learn>=1.2.0
+pyyaml>=6.0
+spacy>=3.4.0
+
+# Для разработки
+pytest>=7.0.0
+black>=22.0.0
+isort>=5.10.0
+flake8>=5.0.0
+
+# Для логирования
+colorlog>=6.7.0
+
+# Для работы с конфигурацией
+pydantic>=1.10.0
