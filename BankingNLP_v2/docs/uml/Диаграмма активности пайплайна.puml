@@ -1,0 +1,26 @@
+@startuml
+!theme spacelab
+title Banking NLP v2.0: Архитектура компонентов
+
+package "FastAPI Backend" {
+  [main.py] --> [api_v1]
+  [api_v1]  --> [nlp_service]
+  [api_v1]  --> [analytics_service]
+  [api_v1]  --> [monitoring_service]
+  [nlp_service] --> [llm_service] : Классификация текста (LLM)
+}
+database "PostgreSQL" as DB
+queue "Kafka" as MQ
+cloud "CRM REST API" as CRM
+cloud "Data Warehouse" as DWH
+cloud "Alerting" as Alert
+node "Модель Phi-2 (GGUF)" as LLM_MODEL
+
+[llm_service] ..> LLM_MODEL : загрузка/инференс
+[nlp_service] ..> DB
+[analytics_service] ..> DB
+[analytics_service] ..> DWH
+[nlp_service] ..> CRM : sync()
+[monitoring_service] ..> Alert : send_alert()
+[nlp_service] ..> MQ : publish(entity_json)
+@enduml
