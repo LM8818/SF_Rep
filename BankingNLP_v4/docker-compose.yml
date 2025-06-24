@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: bank
+      POSTGRES_PASSWORD: bankpass
+      POSTGRES_DB: bankingnlp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bank"]
+      interval: 10s
+      retries: 5
+
+  web:
+    build: .
+    command: ["bash", "scripts/wait-for-db.sh", "db", "5432", "--", \
+              "gunicorn", "-k", "uvicorn.workers.UvicornWorker", \
+              "app.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
+    environment:
+      DATABASE_URL: postgresql://bank:bankpass@db:5432/bankingnlp
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    expose:
+      - "80"
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - web
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  pgdata:

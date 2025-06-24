@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Управление промптами{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Заголовок страницы -->
+            <div class="text-center mb-5">
+                <h1 class="display-5">
+                    <i class="fas fa-magic me-3"></i>Управление промптами
+                </h1>
+                <p class="lead">Создавайте и редактируйте промпты для анализа банковских разговоров</p>
+            </div>
+
+            <!-- Форма создания/редактирования промпта -->
+            <div class="card shadow-lg mb-5">
+                <div class="card-header">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    {{ 'Редактировать промпт' if prompt else 'Создать новый промпт' }}
+                </div>
+                <div class="card-body">
+                    <form id="promptForm" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="name" class="form-label">
+                                        <i class="fas fa-tag"></i>Название промпта
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                                           value="{{ prompt.name if prompt else '' }}" required>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Уникальное название для идентификации промпта
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="category" class="form-label">
+                                        <i class="fas fa-folder"></i>Категория
+                                    </label>
+                                    <select class="form-select form-select-lg" id="category" name="category" required>
+                                        <option value="">Выберите категорию</option>
+                                        <option value="sentiment" {{ 'selected' if prompt and prompt.category == 'sentiment' else '' }}>
+                                            Анализ настроений
+                                        </option>
+                                        <option value="intent" {{ 'selected' if prompt and prompt.category == 'intent' else '' }}>
+                                            Определение намерений
+                                        </option>
+                                        <option value="entities" {{ 'selected' if prompt and prompt.category == 'entities' else '' }}>
+                                            Извлечение сущностей
+                                        </option>
+                                        <option value="summary" {{ 'selected' if prompt and prompt.category == 'summary' else '' }}>
+                                            Краткое содержание
+                                        </option>
+                                        <option value="custom" {{ 'selected' if prompt and prompt.category == 'custom' else '' }}>
+                                            Пользовательский
+                                        </option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Тип анализа, для которого предназначен промпт
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left"></i>Описание
+                            </label>
+                            <textarea class="form-control form-control-lg" id="description" name="description" 
+                                      rows="3" placeholder="Краткое описание назначения промпта">{{ prompt.description if prompt else '' }}</textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i>
+                                Описание того, что делает этот промпт
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="content" class="form-label">
+                                <i class="fas fa-code"></i>Содержимое промпта
+                            </label>
+                            <textarea class="form-control form-control-lg" id="content" name="content" 
+                                      rows="8" placeholder="Введите текст промпта..." required>{{ prompt.content if prompt else '' }}</textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i>
+                                Используйте {text} для вставки анализируемого текста
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="model" class="form-label">
+                                        <i class="fas fa-brain"></i>Модель LLM
+                                    </label>
+                                    <select class="form-select form-select-lg" id="model" name="model" required>
+                                        <option value="">Выберите модель</option>
+                                        <option value="gpt-4" {{ 'selected' if prompt and prompt.model == 'gpt-4' else '' }}>
+                                            GPT-4
+                                        </option>
+                                        <option value="gpt-3.5-turbo" {{ 'selected' if prompt and prompt.model == 'gpt-3.5-turbo' else '' }}>
+                                            GPT-3.5 Turbo
+                                        </option>
+                                        <option value="claude-3" {{ 'selected' if prompt and prompt.model == 'claude-3' else '' }}>
+                                            Claude-3
+                                        </option>
+                                        <option value="custom" {{ 'selected' if prompt and prompt.model == 'custom' else '' }}>
+                                            Пользовательская
+                                        </option>
+                                    </select>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Модель для выполнения промпта
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="temperature" class="form-label">
+                                        <i class="fas fa-thermometer-half"></i>Температура
+                                    </label>
+                                    <input type="range" class="form-range" id="temperature" name="temperature" 
+                                           min="0" max="2" step="0.1" 
+                                           value="{{ prompt.temperature if prompt else 0.7 }}">
+                                    <div class="d-flex justify-content-between">
+                                        <small>0.0 (детерминированный)</small>
+                                        <small id="tempValue">0.7</small>
+                                        <small>2.0 (креативный)</small>
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Контролирует креативность ответов модели
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="max_tokens" class="form-label">
+                                        <i class="fas fa-hashtag"></i>Максимум токенов
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" id="max_tokens" name="max_tokens" 
+                                           min="1" max="4000" value="{{ prompt.max_tokens if prompt else 1000 }}">
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Максимальная длина ответа в токенах
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                               {{ 'checked' if prompt and prompt.is_active else '' }}>
+                                        <label class="form-check-label" for="is_active">
+                                            <i class="fas fa-toggle-on"></i>Активный промпт
+                                        </label>
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle"></i>
+                                        Только активные промпты доступны для использования
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>
+                                {{ 'Обновить' if prompt else 'Создать' }}
+                            </button>
+                            <a href="{{ url_for('prompts') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Список существующих промптов -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-info">
+                    <i class="fas fa-list me-2"></i>Существующие промпты
+                </div>
+                <div class="card-body">
+                    <div id="promptsList" class="row">
+                        <!-- Промпты будут загружены через JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для предварительного просмотра -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Предварительный просмотр промпта
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/prompts.js"></script>
+<script>
+// Обновление значения температуры в реальном времени
+document.getElementById('temperature').addEventListener('input', function() {
+    document.getElementById('tempValue').textContent = this.value;
+});
+
+// Улучшенная валидация формы
+document.getElementById('promptForm').addEventListener('submit', function(e) {
+    const name = document.getElementById('name').value.trim();
+    const content = document.getElementById('content').value.trim();
+    
+    if (!name) {
+        e.preventDefault();
+        showAlert('Пожалуйста, введите название промпта', 'warning');
+        return;
+    }
+    
+    if (!content) {
+        e.preventDefault();
+        showAlert('Пожалуйста, введите содержимое промпта', 'warning');
+        return;
+    }
+    
+    if (!content.includes('{text}')) {
+        if (!confirm('Промпт не содержит плейсхолдер {text}. Продолжить?')) {
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+// Функция показа уведомлений
+function showAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Автоматическое скрытие через 5 секунд
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %} 

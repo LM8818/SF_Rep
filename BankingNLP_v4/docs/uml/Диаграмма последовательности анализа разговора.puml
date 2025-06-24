@@ -1,0 +1,25 @@
+@startuml
+!theme spacelab
+skinparam backgroundColor #F8F8FF
+skinparam defaultTextAlignment center
+title Последовательность анализа разговора (с малой LLM)
+
+actor Пользователь as User
+participant "Веб-интерфейс\n(Frontend)" as FE
+participant "FastAPI\n(API)" as API
+participant "NLP-сервис" as NLP
+participant "Сервис малой LLM" as LLM
+database "PostgreSQL" as ST
+participant "Модель Phi-2\n(GGUF)" as LLM_MODEL
+
+User -> FE : Вводит текст разговора
+FE -> API : POST /api/v1/nlp/analyze
+API -> NLP : analyze_conversation(text, meta)
+NLP -> LLM : classify_text(text)
+LLM -> LLM_MODEL : Инференс (классификация)
+LLM --> NLP : Результат (тема, уверенность)
+NLP -> ST : Логирование результата
+NLP --> API : Ответ (тема, эмоция, продукты)
+API --> FE : JSON с результатами
+FE -> User : Отображение результата
+@enduml

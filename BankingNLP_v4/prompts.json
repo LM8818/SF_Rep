@@ -1,0 +1,24 @@
+{
+  "custom_новый_промт_1.0": {
+    "name": "Новый промт",
+    "description": "Описание",
+    "prompt_type": "custom",
+    "template": "Шаблон {param}",
+    "parameters": [
+      "param"
+    ],
+    "version": "1.0",
+    "is_active": true,
+    "metadata": {}
+  },
+  "custom_существующий_промт_1.0": {
+    "name": "Существующий промт",
+    "description": "Описание",
+    "prompt_type": "custom",
+    "template": "Шаблон",
+    "parameters": [],
+    "version": "1.0",
+    "is_active": true,
+    "metadata": {}
+  }
+}

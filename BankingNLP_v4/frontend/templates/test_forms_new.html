@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking NLP System</title>
+    <link rel="stylesheet" href="/static/css/test-form.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏦</div>
+            <h1>Banking NLP System</h1>
+            <p class="subtitle">Интеллектуальный анализ банковских разговоров</p>
+        </div>
+
+        <div class="form-section">
+            <form id="analysis-form">
+                <div class="form-group">
+                    <label for="conversation-text">Текст разговора</label>
+                    <textarea 
+                        id="conversation-text" 
+                        name="text" 
+                        placeholder="Введите текст банковского разговора..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="examples-section">
+                    <p class="examples-title">Примеры для тестирования:</p>
+                    <div class="example-buttons">
+                        <button type="button" class="example-btn" data-example="кредит">🚗 Автокредит</button>
+                        <button type="button" class="example-btn" data-example="проблема">📱 Проблемы с приложением</button>
+                        <button type="button" class="example-btn" data-example="ипотека">🏠 Ипотека</button>
+                        <button type="button" class="example-btn" data-example="карта">💳 Разблокировка карты</button>
+                        <button type="button" class="example-btn" data-example="вклад">💰 Банковский вклад</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="analyze-btn" id="analyze-btn">
+                    Анализировать разговор
+                </button>
+            </form>
+        </div>
+
+        <!-- Результаты показываются только после анализа -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <h2>Результаты анализа</h2>
+            
+            <div class="result-grid">
+                <div class="result-card">
+                    <h3>🎯 Тематики</h3>
+                    <div id="themes-container" class="tags-container"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>🏦 Банковские продукты</h3>
+                    <div id="products-container" class="tags-container"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>😊 Эмоции</h3>
+                    <div id="emotions-container" class="emotions-chart"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>📊 Уверенность</h3>
+                    <div class="confidence-container">
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar" id="confidence-bar"></div>
+                        </div>
+                        <span class="confidence-value" id="confidence-value">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('analysis-form');
+            const resultsSection = document.getElementById('results-section');
+            const textArea = document.getElementById('conversation-text');
+            const exampleButtons = document.querySelectorAll('.example-btn');
+            
+            // Примеры текстов
+            const examples = {
+                'кредит': 'Клиент: Здравствуйте, хочу оформить кредит на автомобиль. Какие у вас условия?\nОператор: Конечно! Расскажу о наших условиях автокредитования.',
+                'проблема': 'Клиент: Не могу войти в мобильное приложение, постоянно выдает ошибку.\nОператор: Давайте разберемся с проблемой доступа к приложению.',
+                'ипотека': 'Клиент: Интересует ипотека на вторичное жилье. Какие документы нужны?\nОператор: Отличный выбор! Расскажу о программах ипотечного кредитования.',
+                'карта': 'Клиент: Моя карта заблокирована, как восстановить доступ к счету?\nОператор: Поможем разблокировать карту и восстановить доступ.',
+                'вклад': 'Клиент: Хочу открыть вклад с максимальным процентом. Что посоветуете?\nОператор: Рассмотрим наши депозитные программы с выгодными условиями.'
+            };
+
+            // Обработчики кнопок примеров
+            exampleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const exampleType = this.dataset.example;
+                    textArea.value = examples[exampleType];
+                    
+                    // Визуальная обратная связь
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Обработчик формы
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const text = textArea.value.trim();
+                if (!text) {
+                    alert('Пожалуйста, введите текст для анализа');
+                    return;
+                }
+
+                const analyzeBtn = document.getElementById('analyze-btn');
+                const originalText = analyzeBtn.textContent;
+                
+                // Показываем состояние загрузки
+                analyzeBtn.textContent = 'Анализируем...';
+                analyzeBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/api/v1/nlp/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            text: text,
+                            client_id: null,
+                            channel: 'чат'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    // Отображаем результаты
+                    displayResults(data);
+                    
+                    // Показываем секцию результатов
+                    resultsSection.style.display = 'block';
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+                } catch (error) {
+                    console.error('Ошибка при анализе:', error);
+                    alert('Произошла ошибка при анализе текста. Попробуйте еще раз.');
+                } finally {
+                    // Восстанавливаем кнопку
+                    analyzeBtn.textContent = originalText;
+                    analyzeBtn.disabled = false;
+                }
+            });
+
+            function displayResults(data) {
+                // Отображение тематик
+                const themesContainer = document.getElementById('themes-container');
+                themesContainer.innerHTML = '';
+                if (data.theme) {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.textContent = data.theme;
+                    themesContainer.appendChild(tag);
+                } else {
+                    themesContainer.innerHTML = '<span class="tag">Не определено</span>';
+                }
+
+                // Отображение продуктов
+                const productsContainer = document.getElementById('products-container');
+                productsContainer.innerHTML = '';
+                if (data.products && data.products.length > 0) {
+                    data.products.forEach(product => {
+                        const tag = document.createElement('span');
+                        tag.className = 'tag';
+                        tag.textContent = product;
+                        productsContainer.appendChild(tag);
+                    });
+                } else {
+                    productsContainer.innerHTML = '<span class="tag">Не определено</span>';
+                }
+
+                // Отображение эмоций
+                const emotionsContainer = document.getElementById('emotions-container');
+                emotionsContainer.innerHTML = '';
+                if (data.emotion) {
+                    const emotionItem = document.createElement('div');
+                    emotionItem.className = 'emotion-item';
+                    
+                    const percentage = 85; // Примерное значение
+                    emotionItem.innerHTML = `
+                        <span>${data.emotion}</span>
+                        <div class="emotion-bar">
+                            <div class="emotion-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <span>${percentage}%</span>
+                    `;
+                    emotionsContainer.appendChild(emotionItem);
+                }
+
+                // Отображение уверенности
+                const confidenceBar = document.getElementById('confidence-bar');
+                const confidenceValue = document.getElementById('confidence-value');
+                
+                if (data.confidence !== undefined) {
+                    const confidence = Math.round(data.confidence * 100);
+                    setTimeout(() => {
+                        confidenceBar.style.width = `${confidence}%`;
+                        confidenceValue.textContent = `${confidence}%`;
+                    }, 300);
+                } else {
+                    // Если confidence нет, показываем 75% как пример
+                    setTimeout(() => {
+                        confidenceBar.style.width = '75%';
+                        confidenceValue.textContent = '75%';
+                    }, 300);
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

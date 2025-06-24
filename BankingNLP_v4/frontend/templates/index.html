@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Banking NLP v2.0{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="mb-4">Banking NLP System v2.0</h1>
+            <p class="lead">Интеллектуальная система анализа банковских транскриптов</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-comments fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Анализ разговоров</h5>
+                        <p class="card-text">Автоматическое выделение тематик, продуктов и эмоций из транскриптов</p>
+                        <a href="/test" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Аналитика</h5>
+                        <p class="card-text">Детальная аналитика по темам, продуктам и удовлетворенности клиентов</p>
+                        <a href="/analytics" class="btn btn-success">Посмотреть</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h2>Основные возможности</h2>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Классификация тематик:</strong> Автоматическое определение более 50 тематик разговоров
+                </li>
+                <li class="list-group-item">
+                    <strong>Анализ продуктов:</strong> Выявление упоминаний банковских продуктов и услуг
+                </li>
+                <li class="list-group-item">
+                    <strong>Эмоциональный анализ:</strong> Определение эмоциональной окраски разговора
+                </li>
+                <li class="list-group-item">
+                    <strong>Оценка удовлетворенности:</strong> Расчет уровня удовлетворенности клиента
+                </li>
+                <li class="list-group-item">
+                    <strong>Выявление рисков:</strong> Идентификация потенциальных проблем и рисков
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+@startuml
+!theme spacelab
+skinparam backgroundColor #F8F8FF
+skinparam defaultTextAlignment center
+title Классы ядра и LLM Banking NLP v2.0
+
+class Config {
+  + SECRET_KEY: str
+  + DATABASE_URL: str
+  + LOG_LEVEL: str
+  + API_V1_STR: str
+  + load_from_env()
+  ' Конфигурация приложения и переменных окружения
+}
+
+class Security {
+  + JWTBearer: HTTPBearer
+  + create_access_token()
+  + decode_jwt()
+  + verify_password()
+  ' Аутентификация и безопасность
+}
+
+class Database {
+  + SessionLocal: sessionmaker
+  + get_db() -> Generator
+  ' Работа с базой данных
+}
+
+class LLMService {
+  + classify_text(text: str) : dict
+  + load_model()
+  ' Классификация текста с помощью малой LLM
+}
+
+Config -- Security : использует >
+Security -- Database : защищает >
+NLPService -- LLMService : вызывает >
+@enduml

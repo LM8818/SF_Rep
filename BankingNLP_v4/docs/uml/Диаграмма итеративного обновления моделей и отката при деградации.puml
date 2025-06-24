@@ -1,0 +1,25 @@
+@startuml
+!theme spacelab
+skinparam backgroundColor #F8F8FF
+skinparam defaultTextAlignment center
+title Диаграмма итеративного обновления модели и отката при деградации
+
+start
+:Мониторинг метрик качества\n(accuracy, F1, PSI);
+if (Метрики в норме?) then (Да)
+  :Работа продолжается\nна текущей модели;
+  stop
+else (Нет)
+  :Обнаружена деградация;
+  :Триггер retrain (переобучение);
+  :Обучение новой версии модели;
+  :Тестирование на hold-out данных;
+  if (Новая модель лучше?) then (Да)
+    :Rollout новой модели\n(обновление production);
+    stop
+  else (Нет)
+    :Откат к предыдущей стабильной версии;
+    stop
+  endif
+endif
+@enduml
